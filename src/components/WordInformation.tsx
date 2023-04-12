@@ -1,12 +1,13 @@
 import React, { useRef, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
+import Definitions from "./meanings/Definitions";
 
-interface Definitions {
+interface definitions {
 	antonyms: string[];
 	synonyms: string[];
 	example: string;
-	difinition: string;
+	definition: string;
 }
 
 interface Phonetics {
@@ -19,7 +20,7 @@ interface Word {
 	word: string;
 	meanings: {
 		partOfSpeech: string;
-		definitions: Definitions[];
+		definitions: definitions[];
 	}[];
 }
 
@@ -28,6 +29,8 @@ const WordInformation = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [searchedWord, setSearchedWord] = useState("");
 	const [word, setWord] = useState<Word[]>([]);
+
+	word?.map((wordInfo) => console.log(wordInfo));
 
 	const fetchWord = async () => {
 		setWord([]);
@@ -40,9 +43,11 @@ const WordInformation = () => {
 			);
 			setWord(res.data);
 			setIsLoading(false);
+			console.log(word);
 		} catch (err: any) {
 			if (err.response && err.response.status === 404) {
 				setWord([]);
+				setIsLoading(false);
 			} else {
 				console.error(err);
 			}
@@ -72,21 +77,37 @@ const WordInformation = () => {
 				</span>
 			</div>
 
-			<div className="py-8">
+			<div className="flex justify-center items-center">
 				{isLoading && <p>Loading...</p>}
 				{word.length === 0 && !isLoading && searchedWord !== "" && (
 					<p>No results found for {searchedWord}</p>
 				)}
+			</div>
 
-				{word.length > 0 && (
+			<div className="py-8">
+				{word && (
 					<div>
-						<div>
-							<p>{word[0].word}</p>
-							<p className="">{word[0].phonetics[0].text}</p>
+						<div className="flex flex-col gap-2">
+							<p className="text-3xl font-medium">
+								{word?.[0]?.word}
+							</p>
+							<p className="text-light-purple text-lg">
+								{word?.[0]?.phonetics[0].text}
+							</p>
 						</div>
 					</div>
 				)}
 			</div>
+
+			{word?.map((wordInfo) => {
+				return (
+					<Definitions
+						word={wordInfo}
+						isLoading={isLoading}
+						searchedWord={searchedWord}
+					/>
+				);
+			})}
 		</div>
 	);
 };
