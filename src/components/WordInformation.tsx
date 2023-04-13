@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import axios from "axios";
 import Definitions from "./meanings/Definitions";
 
@@ -17,6 +18,7 @@ interface Phonetics {
 
 interface Word {
 	phonetics: Phonetics[];
+	phonetic: string;
 	word: string;
 	meanings: {
 		partOfSpeech: string;
@@ -29,8 +31,6 @@ const WordInformation = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [searchedWord, setSearchedWord] = useState("");
 	const [word, setWord] = useState<Word[]>([]);
-
-	word?.map((wordInfo) => console.log(wordInfo));
 
 	const fetchWord = async () => {
 		setWord([]);
@@ -51,6 +51,16 @@ const WordInformation = () => {
 			} else {
 				console.error(err);
 			}
+		}
+	};
+
+	const handlePlayAudio = (words: Word[]): void => {
+		const url = words
+			.find((word) => word.phonetics.some((audio) => audio.audio !== ""))
+			?.phonetics.find((audio) => audio.audio !== "")?.audio;
+		if (url) {
+			const playAudio = new Audio(url);
+			playAudio.play();
 		}
 	};
 
@@ -84,7 +94,8 @@ const WordInformation = () => {
 				)}
 			</div>
 
-			<div className="py-8">
+			<div className="py-8 flex justify-between items-center">
+				{/* WORD PRONOUNCIATION - TEXT */}
 				{word && (
 					<div>
 						<div className="flex flex-col gap-2">
@@ -92,19 +103,31 @@ const WordInformation = () => {
 								{word?.[0]?.word}
 							</p>
 							<p className="text-light-purple text-lg">
-								{word?.[0]?.phonetics[0].text}
+								{word?.[0]?.phonetic}
 							</p>
 						</div>
 					</div>
 				)}
+
+				{/* WORD PRONOUNCIATION - AUDIO */}
+
+				{word.length > 0 && (
+					<button
+						className="h-14 w-14 rounded-full bg-[#e9d5ff] flex items-center justify-center"
+						onClick={() => handlePlayAudio(word)}
+					>
+						<PlayArrowIcon sx={{ color: "#a855f7" }} />
+					</button>
+				)}
 			</div>
 
-			{word?.map((wordInfo) => {
+			{word?.map((wordInfo, idx) => {
 				return (
 					<Definitions
 						word={wordInfo}
 						isLoading={isLoading}
 						searchedWord={searchedWord}
+						key={`${wordInfo.word} - ${idx}`}
 					/>
 				);
 			})}
