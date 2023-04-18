@@ -19,6 +19,7 @@ interface Phonetics {
 interface Word {
 	phonetics: Phonetics[];
 	phonetic: string;
+	sourceUrl: string[];
 	word: string;
 	meanings: {
 		partOfSpeech: string;
@@ -32,6 +33,8 @@ const WordInformation = () => {
 	const [searchedWord, setSearchedWord] = useState("");
 	const [word, setWord] = useState<Word[]>([]);
 
+	console.log(word);
+
 	const fetchWord = async () => {
 		setWord([]);
 		try {
@@ -43,7 +46,6 @@ const WordInformation = () => {
 			);
 			setWord(res.data);
 			setIsLoading(false);
-			console.log(word);
 		} catch (err: any) {
 			if (err.response && err.response.status === 404) {
 				setWord([]);
@@ -54,14 +56,14 @@ const WordInformation = () => {
 		}
 	};
 
-	const handlePlayAudio = (words: Word[]): void => {
-		const url = words
-			.find((word) => word.phonetics.some((audio) => audio.audio !== ""))
-			?.phonetics.find((audio) => audio.audio !== "")?.audio;
-		if (url) {
-			const playAudio = new Audio(url);
-			playAudio.play();
-		}
+	const handlePlayAudio = (audioUrl: Phonetics[]): void => {
+		audioUrl.some((url) => {
+			if (url.audio !== "") {
+				const playAudio = new Audio(url.audio);
+				playAudio.play();
+				return true;
+			}
+		});
 	};
 
 	return (
@@ -94,9 +96,9 @@ const WordInformation = () => {
 				)}
 			</div>
 
-			<div className="py-8 flex justify-between items-center">
-				{/* WORD PRONOUNCIATION - TEXT */}
-				{word && (
+			{/* <div className="py-8 flex justify-between items-center"> */}
+			{/* WORD PRONOUNCIATION - TEXT */}
+			{/* {word && (
 					<div>
 						<div className="flex flex-col gap-2">
 							<p className="text-3xl font-medium">
@@ -107,23 +109,24 @@ const WordInformation = () => {
 							</p>
 						</div>
 					</div>
-				)}
+				)} */}
 
-				{/* WORD PRONOUNCIATION - AUDIO */}
+			{/* WORD PRONOUNCIATION - AUDIO */}
 
-				{word.length > 0 && (
+			{/* {word.length > 0 && (
 					<button
 						className="h-14 w-14 rounded-full bg-[#e9d5ff] flex items-center justify-center"
 						onClick={() => handlePlayAudio(word)}
 					>
 						<PlayArrowIcon sx={{ color: "#a855f7" }} />
 					</button>
-				)}
-			</div>
+				)} */}
+			{/* </div> */}
 
 			{word?.map((wordInfo, idx) => {
 				return (
 					<Definitions
+						playAudio={handlePlayAudio}
 						word={wordInfo}
 						isLoading={isLoading}
 						searchedWord={searchedWord}
