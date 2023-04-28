@@ -2,7 +2,6 @@
 
 Dictionary-app is a simple web application that allows users to search a word and displays its definition and pronounciation. The app
 uses [dictionarydev's API](https://dictionaryapi.dev/) to fetch the word definitions.
-Dictionary-app is made using this [api](https://dictionaryapi.dev/)
 
 ## Installation
 
