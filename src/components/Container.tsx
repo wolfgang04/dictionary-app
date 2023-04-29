@@ -4,7 +4,7 @@ import WordInformation from "./WordInformation";
 
 const Container = () => {
 	return (
-		<div className="max-w-[687px]">
+		<div className="">
 			<Header />
 			<WordInformation />
 		</div>

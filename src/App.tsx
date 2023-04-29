@@ -2,8 +2,8 @@ import Container from "./components/Container";
 
 function App() {
 	return (
-		<div className="flex w-screen h-screen justify-center">
-			<div className="py-5 md:py-10 px-[5%] min-w-[390px]">
+		<div className="flex justify-center">
+			<div className="p-5 md:p-10 w-full md:w-[80%] lg:w-2/3">
 				<Container />
 			</div>
 		</div>
